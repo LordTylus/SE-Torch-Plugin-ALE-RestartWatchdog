@@ -24,11 +24,11 @@ namespace ALE_RestartWatchdog {
             base.Init(torch);
             var configFile = Path.Combine(StoragePath, "RestartWatchdog.cfg");
 
-            try            {
+            try {
 
                 _config = Persistent<RestartConfig>.Load(configFile);
 
-            }            catch (Exception e)            {
+            } catch (Exception e) {
                 Log.Warn(e);
             }
 

@@ -57,36 +57,15 @@ namespace ALE_RestartWatchdog
 
                     /* Delay is in Seconds We need Milliseconds so * 1000 */
                     Task.Delay(delayUnloading * 1000).ContinueWith((t) => {
-                        CheckRestart(session, TorchSessionState.Unloading);
-                    });
-                    break;
-
-                case TorchSessionState.Unloaded:
-
-                    Log.Info("Start Unloaded!!!");
-
-                    int delayUnloaded = config.DelayInSecondsAfterUnload;
-
-                    Log.Info("Wait for " + delayUnloaded + " before force Restart!");
-
-                    /* Delay is in Seconds We need Milliseconds so * 1000 */
-                    Task.Delay(delayUnloaded * 1000).ContinueWith((t) => {
-                        CheckRestart(session, TorchSessionState.Unloaded);
+                        CheckRestart(session);
                     });
                     break;
             }
         }
 
-        private void CheckRestart(ITorchSession session, TorchSessionState referenceState) {
+        private void CheckRestart(ITorchSession session) {
 
-
-            /* State is fine so no need to fix anything */
-            if (session.State != referenceState) {
-                Log.Info("Shutdown successful no need to interfere after "+ referenceState + "!");
-                return;
-            }
-
-            Log.Warn("Unloading took too long. Force restart!");
+            Log.Warn("Server hasnt yet restarted. Force restart!");
 
             string exe = Assembly.GetEntryAssembly().Location;
 
@@ -95,7 +74,7 @@ namespace ALE_RestartWatchdog
                 Log.Error("Could not find Path to exe file! Aborting Restart!");
                 return;
             }
-
+            
             try {
 
                 var torchConfig = (TorchConfig) session.Torch.Config;
