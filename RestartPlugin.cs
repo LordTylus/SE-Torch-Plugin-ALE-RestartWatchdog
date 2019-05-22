@@ -1,17 +1,20 @@
 ﻿using NLog;
 using System;
 using System.IO;
+using System.Windows.Controls;
 using Torch;
 using Torch.API;
 using Torch.API.Plugins;
 
 namespace ALE_RestartWatchdog {
 
-    public class RestartPlugin : TorchPluginBase
-    {
+    public class RestartPlugin : TorchPluginBase, IWpfPlugin {
 
         public static RestartPlugin Instance { get; private set; }
         public static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
+        private Control _control;
+        public UserControl GetControl() => _control ?? (_control = new Control(this));
 
         private Persistent<RestartConfig> _config;
         public RestartConfig Config => _config?.Data;
