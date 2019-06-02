@@ -49,6 +49,11 @@ namespace ALE_RestartWatchdog
             switch (state) {
                 case TorchSessionState.Unloading:
 
+                    if (!config.Enabled) {
+                        Log.Warn("Restart Watchdog disabled! Will not attempt any restarts if server is stuck!");
+                        return;
+                    }
+
                     Log.Info("Start Unloading!!!");
 
                     int delayUnloading = config.DelayInSeconds;
