@@ -7,7 +7,6 @@ using Torch.API;
 using Torch.API.Managers;
 using Torch.API.Session;
 using Torch.Managers;
-using Torch.Managers.PatchManager;
 using Torch.Server;
 using Torch.Session;
 
