@@ -89,7 +89,7 @@ namespace ALE_RestartWatchdog
 
                 /** Tell the new Torch instance to wait till the old one is gone */
                 torchConfig.WaitForPID = currentProcess.Id.ToString();
-                torchConfig.Autostart = true;
+                torchConfig.TempAutostart = true;
 
                 Log.Info("Starting '" + exe + "' with '" + torchConfig.ToString() + "'!");
                 Process.Start(exe, torchConfig.ToString());
