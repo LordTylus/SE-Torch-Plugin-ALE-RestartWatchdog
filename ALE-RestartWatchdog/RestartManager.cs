@@ -1,7 +1,9 @@
 ﻿using NLog;
+using Sandbox.Game.Screens.Helpers;
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Torch.API;
 using Torch.API.Managers;
@@ -57,7 +59,7 @@ namespace ALE_RestartWatchdog
 
                     int delayUnloading = config.DelayInSeconds;
 
-                    Log.Info("Wait for " + delayUnloading + " before force Restart!");
+                    Log.Info("Wait for " + delayUnloading + " seconds before force Restart!");
 
                     /* Delay is in Seconds We need Milliseconds so * 1000 */
                     Task.Delay(delayUnloading * 1000).ContinueWith((t) => {
@@ -69,7 +71,7 @@ namespace ALE_RestartWatchdog
 
         private void CheckRestart(ITorchSession session) {
 
-            Log.Warn("Server hasnt yet restarted. Force restart!");
+            Log.Warn("Server hasnt yet restarted. Attempt force restart!");
 
             string exe = Assembly.GetEntryAssembly().Location;
 
@@ -78,8 +80,19 @@ namespace ALE_RestartWatchdog
                 Log.Error("Could not find Path to exe file! Aborting Restart!");
                 return;
             }
-            
+
             try {
+
+                Log.Info("Saving in progress: "+MyAsyncSaving.InProgress);
+
+                while (MyAsyncSaving.InProgress) {
+                    
+                    Log.Warn("Force restart delayed by 5 seconds since Worldsave is not done!");
+
+                    Thread.Sleep(5000);
+                }
+
+                Log.Info("Saving seems done, continue with forced restart!");
 
                 var torchConfig = (TorchConfig) session.Torch.Config;
                 /* Making sure Logger is done */
@@ -98,7 +111,7 @@ namespace ALE_RestartWatchdog
                 currentProcess.Kill();
 
             } catch (Exception e) {
-                Log.Error("Could not Restart the Server! Tried running '" + exe + "' And Stopping PID " + Process.GetCurrentProcess().Id.ToString(), e);
+                Log.Error(e, "Could not Restart the Server! Tried running '" + exe + "' And Stopping PID " + Process.GetCurrentProcess().Id.ToString());
             }
         }
     }
